@@ -1,3 +1,5 @@
+import timeit
+
 # Read 'network.txt' file and return the adjacency matrix and total weight of the network
 def ReadNetworkTxt(file_path):
 	lines = open(file_path, 'r')
@@ -62,8 +64,12 @@ def PrimsAlgorithm(matrix):
 # driver function of the script
 def main():
 
+	start = timeit.default_timer()
+
 	network_matrix, total_network_weight = ReadNetworkTxt('./network.txt')
 	minimal_network_weight, mst_v_and_e = PrimsAlgorithm(network_matrix)
+
+	stop = timeit.default_timer()
 
 	print ('************** REPORT *************')
 
@@ -76,7 +82,10 @@ def main():
 	print ('Minimal Network Weight: ' + str(minimal_network_weight))
 	print ('Maximum Saving: ' + str(total_network_weight - minimal_network_weight))
 
+	print ('Total Runtime: ' + str (stop - start))
+
 	print ('***********************************')
+
 
 
 if __name__ == '__main__':
