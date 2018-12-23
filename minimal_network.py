@@ -1,5 +1,5 @@
+# Read 'network.txt' file and return the adjacency matrix and total weight of the network
 def ReadNetworkTxt(file_path):
-
 	lines = open(file_path, 'r')
 	trueValue = lambda item : 0 if item == '-' else int(item)
 	matrix = [[trueValue(item) for item in line.rstrip('\n').split(',')] for line in lines]
@@ -11,17 +11,22 @@ def ReadNetworkTxt(file_path):
 
 	return (matrix, total_weight)
 
-def Prims(matrix):
+
+# optimized version of implementation of Prim's Algorithm here derived from source here:
+# https://coderbyte.com/algorithm/find-minimum-spanning-tree-using-prims-algorithm
+# returns: weight and list of minimum edges in the adjacency matrix
+def PrimsAlgorithm(matrix):
   V = len(matrix)
 
   # arbitrarily choose initial vertex from graph
   vertex = 0
   
-  # initialize empty edges array and empty MST
-  MST = []
+ 
+  weight = 0 # to store and compute weight of minimal network
+  MST = [] # to store all the vertices (nodes) along with the value of edges (weight)
   edges = []
-  visited = set()
-  minEdge = [None,None,float('inf')]
+  visited = set() # to store all the visited vertices
+  minEdge = [None,None,float('inf')] # initial minimum edge
   
   # run prims algorithm until we create an MST
   # that contains every vertex from the graph
@@ -30,13 +35,13 @@ def Prims(matrix):
     visited.add(vertex)
     
     # add each edge to list of potential edges
-    for r in range(0, V):
+    for r in xrange(0, V):
       if matrix[vertex][r] != 0:
         edges.append([vertex,r,matrix[vertex][r]])
         
     # find edge with the smallest weight to a vertex
     # that has not yet been visited
-    for e in range(0, len(edges)):
+    for e in xrange(0, len(edges)):
       if edges[e][2] < minEdge[2] and edges[e][1] not in visited:
         minEdge = edges[e]
         
@@ -45,24 +50,34 @@ def Prims(matrix):
 
     # push min edge to MST
     MST.append(minEdge)
+
+    weight += minEdge[2]
       
     # start at new vertex and reset min edge
     vertex = minEdge[1]
     minEdge = [None,None,float('inf')]
-
-  sum = 0
-  for item in MST:
-  	sum += item[-1]
     
-  return (sum)
+  return (weight, MST)
 
+# driver function of the script
 def main():
+
 	network_matrix, total_network_weight = ReadNetworkTxt('./network.txt')
+	minimal_network_weight, mst_v_and_e = PrimsAlgorithm(network_matrix)
 
-	minimal_network_weight = Prims(network_matrix)
+	print ('************** REPORT *************')
 
-	print (total_network_weight)
-	print (minimal_network_weight)
+	print ('Original Network Weight: ' + str(total_network_weight))
+	
+
+	# print ('Vertex and Edges of Minimal Network \n')
+	# print (mst_v_and_e)
+
+	print ('Minimal Network Weight: ' + str(minimal_network_weight))
+	print ('Maximum Saving: ' + str(total_network_weight - minimal_network_weight))
+
+	print ('***********************************')
+
 
 if __name__ == '__main__':
 	main()
